@@ -16,6 +16,8 @@ namespace Starbound_Planet_Tagger
         private int offsetY;
         private int MaxWidth;
         private int MaxHeight;
+        private int SourceWidth;
+        private int SourceHeight;
 
         public int Width { get { return MaxWidth; } }
         public int Height { get { return MaxHeight; } }
@@ -27,11 +29,16 @@ namespace Starbound_Planet_Tagger
             offsetY = Y;
             MaxWidth = pWidth;
             MaxHeight = pHeight;
+            
+
             SourceImage = Source; // little backwards here because GetImage was added later
 
             SourceImage = GetImage(); // isolate from the whole
 
             SourceBytes = GetMatrix();
+
+            SourceWidth = MaxWidth;
+            SourceHeight = MaxHeight;
 
             // Crop complete, so reset offsets
             offsetX = 0;
@@ -59,16 +66,21 @@ namespace Starbound_Planet_Tagger
 
             SourceBytes = GetMatrix();
 
+            
+            SourceWidth = MaxWidth;
+            SourceHeight = MaxHeight;
+
             // Crop complete, so reset offsets
             offsetX = 0;
             offsetY = 0;
+
         }
 
         public Color GetPixel(int X, int Y, bool UseBitmap = false)
         {
-            if ((offsetX + X) < 0 || (offsetX + X) >= SourceImage.Width)
+            if ((offsetX + X) < 0 || (offsetX + X) >= SourceWidth)
                 return Color.Transparent;
-            if ((offsetY + Y) < 0 || (offsetY + Y) >= SourceImage.Height)
+            if ((offsetY + Y) < 0 || (offsetY + Y) >= SourceHeight)
                 return Color.Transparent;
 
             if (offsetX < 0 || X >= MaxWidth + offsetX)

@@ -31,6 +31,8 @@ namespace Starbound_Planet_Tagger
 
         bool IsBusy = false;
 
+        string DBFile = "data\\sbdb.xml";
+
 
         public void CheckForPrintScreen(object sender, KeyEventArgs e)
         {
@@ -70,18 +72,18 @@ namespace Starbound_Planet_Tagger
             var DefaultXML = "<?xml version=\"1.0\" encoding=\"utf-8\" ?><sbplanet><System>Starbound Planet Scanner</System><Name></Name><X>0</X>" +
  "<Y>0</Y><Biome></Biome><Threat></Threat><Notes>Enter notes here</Notes</sbplanet>";
 
-            if (!File.Exists("data\\sbdb.xml"))
+            if (!File.Exists(DBFile))
             {
-                System.IO.File.WriteAllText("data\\sbdb.xml",DefaultXML);
+                System.IO.File.WriteAllText(DBFile,DefaultXML);
             }
 
-            XmlData.ReadXml("data\\sbdb.xml");
+            XmlData.ReadXml(DBFile);
 
             if (XmlData.Tables.Count == 0)
             {
 
-                System.IO.File.WriteAllText("data\\sbdb.xml", DefaultXML);
-                XmlData.ReadXml("data\\sbdb.xml");
+                System.IO.File.WriteAllText(DBFile, DefaultXML);
+                XmlData.ReadXml(DBFile);
             }
 
            
@@ -96,12 +98,12 @@ namespace Starbound_Planet_Tagger
 
         void dataGridView1_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
         {
-            XmlData.WriteXml("data\\sbdb.xml");
+            XmlData.WriteXml(DBFile);
         }
 
         void dataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            XmlData.WriteXml("data\\sbdb.xml");
+            XmlData.WriteXml(DBFile);
         }
 
         private void LoadSymbols_DoWork(object sender, DoWorkEventArgs e)
@@ -215,7 +217,7 @@ namespace Starbound_Planet_Tagger
                 pictureBox5.Image = PlanetLevel.GetImage();
                 pictureBox6.Image = PlanetCoords.GetImage();
 
-                string System = "", Name = "", X = "", Y = "", Biome = "", Threat = "";
+                string pSystem = "", Name = "", X = "", Y = "", Biome = "", Threat = "";
 
                 var Running = new List<Task>();
 
@@ -225,7 +227,7 @@ namespace Starbound_Planet_Tagger
 
                     Console.WriteLine(PlanetNameText);
 
-                    System = FixZero(PlanetNameText);
+                    pSystem = FixZero(PlanetNameText);
                 }));
 
 
@@ -289,12 +291,12 @@ namespace Starbound_Planet_Tagger
                 if (!Directory.Exists("planetpics"))
                     Directory.CreateDirectory("planetpics");
 
-                PlanetPic.GetImage().Save(("planetpics\\"+System + Name + ".png").Replace(" ", ""));
+                PlanetPic.GetImage().Save(("planetpics\\"+pSystem + Name + ".png").Replace(" ", ""));
 
-                XmlData.Tables[0].Rows.Add(System, System + " " + Name, X, Y, Biome.Replace("Biome:", ""), Threat.Replace("Threat Level:", ""), "");
-                dataGridView1.Invoke(new MethodInvoker(() => { IsBusy = false; pictureBox7.Image = null; dataGridView1.Refresh(); XmlData.WriteXml("sbdb.xml"); }));
+                XmlData.Tables[0].Rows.Add(pSystem, pSystem + " " + Name, X, Y, Biome.Replace("Biome:", ""), Threat.Replace("Threat Level:", ""), "");
+                dataGridView1.Invoke(new MethodInvoker(() => { IsBusy = false; pictureBox7.Image = null; dataGridView1.Refresh(); XmlData.WriteXml(DBFile); }));
 
-               
+                System.Media.SystemSounds.Exclamation.Play();
 
             }
             else
@@ -308,6 +310,8 @@ namespace Starbound_Planet_Tagger
 
                 IsBusy = false;
                 pictureBox7.Image = null;
+
+                System.Media.SystemSounds.Hand.Play();
             }
       
 
@@ -415,10 +419,10 @@ namespace Starbound_Planet_Tagger
                 return;
 
             // Should put regex here with more restrictions
-            var Name = dataGridView1.SelectedCells[0].OwningRow.Cells[1].Value.ToString().Replace("\\", "");
-            Name = (("planetpics\\" + Name + ".png").Replace(" ", ""));
+            var OName = dataGridView1.SelectedCells[0].OwningRow.Cells[1].Value.ToString().Replace("\\", "");
+            var Name = (("planetpics\\" + OName + ".png").Replace(" ", ""));
 
-            if (!Name.Equals(CurrentPic) && File.Exists(Name))
+            if (!String.IsNullOrEmpty(OName) && !Name.Equals(CurrentPic) &&  File.Exists(Name))
             {
                 CurrentPic = Name;
                 pictureBox1.Image = Bitmap.FromFile(Name);
@@ -431,7 +435,7 @@ namespace Starbound_Planet_Tagger
                 pictureBox7.Image = null;
 
             }
-            else if (!File.Exists(Name))
+            else if (!File.Exists(Name) || String.IsNullOrEmpty(OName))
             {
                 pictureBox1.Image = null;
                 CurrentPic = "";
@@ -439,5 +443,18 @@ namespace Starbound_Planet_Tagger
             
 
         }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            dataGridView1.Refresh();
+            XmlData.WriteXml(DBFile);
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            ProgramVersion.Text = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name+" v"+System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()+"\n© 2014, Nicholas Tantillo\nAvailable under MIT License";
+
+
+            }
     }
 }
