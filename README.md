@@ -17,4 +17,4 @@ Want more features? Maybe buy me a beer and we can talk about it:
 
 If you find my tool useful and want me to know it, please consider tipping some bitcoin to **16K9awt7tfdgiWB79qzbSH4wpfoU3VS8zP**
 
-I just did this for fun and I'm only one person, 
+I just did this for fun and I'm only one person, rhanks for checking it out!
