@@ -20,3 +20,13 @@ If you find my tool useful and want me to know it, please consider tipping some 
 I just did this for fun and I'm only one person, thanks for checking it out!
 
 - Nick
+
+
+========================
+**Want to add/change the fields available?**
+
+Close the scanner application and edit the XML file located at data/sbdb.xml; Add any new data nodes you want, just make sure the planet name is always the second one.
+
+For instance, if you wanted to add "In Progress" and "Done" to the list of fields, just add "<inProgress /><done />" before the first "</sbplanet>" closing tag.
+
+I'll probably add a GUI for this eventually...
