@@ -1,6 +1,9 @@
 Starbound-Planet-Scanner
 ========================
 
+![Screenshot of my scanner](http://showmethebitcoin.com/wp-content/uploads/2014/02/SBDBScreenShot.png "Screenshot")
+
+
 Finally, an automatic way to log planets with no typing! Using a custom OCR (optical character recognition) engine, I've created a program that can interpret screenshots of the Starbound Planet Navigator. Simply open Starbound, open the navigator, mouse over the planet you want to log and hit print-screen. If you hear a ding, it worked!
 
 Once the planets are logged in a sortable spreadsheet notes can be added or details can be changed.
@@ -21,6 +24,9 @@ I just did this for fun and I'm only one person, thanks for checking it out!
 
 - Nick
 
+
+Here's a full view of starbound and the scanner actually working:
+![Shot of both screens at once](http://showmethebitcoin.com/wp-content/uploads/2014/02/SBDBActionShot.png "Action shot")
 
 ========================
 **Want to add/change the fields available?**
