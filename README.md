@@ -1,6 +1,8 @@
 Starbound-Planet-Scanner
 ========================
 
+**Please remember to visit [Download Binaries Page](https://github.com/showmethebitcoin/Starbound-Planet-Scanner/releases) to download the latest release!**
+
 ![Screenshot of my scanner](http://showmethebitcoin.com/wp-content/uploads/2014/02/SBDBScreenShot.png "Screenshot")
 
 
