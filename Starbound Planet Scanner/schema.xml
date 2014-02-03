@@ -1,0 +1,23 @@
+<?xml version="1.0" standalone="yes"?>
+<xs:schema id="SBPlanetData" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xs:element name="sbplanet">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="System" type="xs:string" minOccurs="0" />
+        <xs:element name="Name" type="xs:string" minOccurs="0" />
+        <xs:element name="X" type="xs:string" minOccurs="0" />
+        <xs:element name="Y" type="xs:string" minOccurs="0" />
+        <xs:element name="Biome" type="xs:string" minOccurs="0" />
+        <xs:element name="Threat" type="xs:string" minOccurs="0" />
+        <xs:element name="Notes" type="xs:string" minOccurs="0" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SBPlanetData" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="sbplanet" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

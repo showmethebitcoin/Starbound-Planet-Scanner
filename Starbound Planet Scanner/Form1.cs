@@ -32,6 +32,9 @@ using System.Windows.Forms;
 using System.Data;
 using Gma.UserActivityMonitor;
 using System.IO;
+using System.Xml.XPath;
+using System.Xml.Xsl;
+using System.Xml;
 
 
 namespace Starbound_Planet_Tagger
@@ -83,42 +86,7 @@ namespace Starbound_Planet_Tagger
             InitializeComponent();
             LoadSymbols.RunWorkerAsync();
 
-            XmlData = new DataSet();
-
-            if (!Directory.Exists("data"))
-            {
-                Directory.CreateDirectory("data");
-            }
-
-
-            var DefaultXML = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<sbplanet>\n<System>Starbound Planet Scanner</System>\n<Name></Name>\n<X>0</X>\n" +
- "<Y>0</Y>\n<Biome></Biome>\n<Threat></Threat>\n<Notes>Enter notes here</Notes><InProgress></InProgress><Done></Done>\n</sbplanet>";
-
-            if (!File.Exists(DBFile))
-            {
-                System.IO.File.WriteAllText(DBFile,DefaultXML);
-            }
-
-            try
-            {
-
-                XmlData.ReadXml(DBFile);
-            }
-            catch (Exception ex)
-            {
-                File.Copy(DBFile, DBFile+DateTime.Now.Ticks+".corrupt");
-                System.IO.File.WriteAllText(DBFile, DefaultXML);
-                XmlData.ReadXml(DBFile);
-            }
-
-            if (XmlData.Tables.Count == 0)
-            {
-
-                System.IO.File.WriteAllText(DBFile, DefaultXML);
-                XmlData.ReadXml(DBFile);
-            }
-
-           
+            XmlData = ReadSBDB(DBFile);
 
             dataGridView1.DataSource = XmlData.Tables[0];
 
@@ -126,6 +94,47 @@ namespace Starbound_Planet_Tagger
 
            dataGridView1.CellValueChanged += dataGridView1_CellValueChanged;
            dataGridView1.UserDeletedRow += dataGridView1_UserDeletedRow;
+        }
+
+        private DataSet ReadSBDB(string XmlPath)
+        {
+            var nXmlData = new DataSet();
+            nXmlData.ReadXmlSchema("schema.xml");
+
+            if (!Directory.Exists("data"))
+            {
+                Directory.CreateDirectory("data");
+            }
+
+
+            var DefaultXML = "<?xml version=\"1.0\" encoding=\"utf-8\" ?><NewDataSet>\n<sbplanet>\n<System>Starbound Planet Scanner</System>\n<Name></Name>\n<X>0</X>\n" +
+ "<Y>0</Y>\n<Biome></Biome>\n<Threat></Threat>\n<Notes>Enter notes here</Notes><InProgress></InProgress><Done></Done>\n</sbplanet></NewDataSet>";
+
+            if (!File.Exists(XmlPath))
+            {
+                System.IO.File.WriteAllText(XmlPath, DefaultXML);
+            }
+
+            try
+            {
+
+                nXmlData.ReadXml(XmlPath, XmlReadMode.InferSchema);
+            }
+            catch (Exception ex)
+            {
+                File.Copy(XmlPath, XmlPath + DateTime.Now.Ticks + ".corrupt");
+                System.IO.File.WriteAllText(XmlPath, DefaultXML);
+                nXmlData.ReadXml(XmlPath, XmlReadMode.InferSchema);
+            }
+
+            if (nXmlData.Tables.Count == 0)
+            {
+
+                System.IO.File.WriteAllText(XmlPath, DefaultXML);
+                nXmlData.ReadXml(XmlPath);
+            }
+
+            return nXmlData;
         }
 
         void dataGridView1_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
@@ -323,9 +332,18 @@ namespace Starbound_Planet_Tagger
                 if (!Directory.Exists("planetpics"))
                     Directory.CreateDirectory("planetpics");
 
-                PlanetPic.GetImage().Save(("planetpics\\"+pSystem + Name + ".png").Replace(" ", ""));
+                var Note = "";
 
-                XmlData.Tables[0].Rows.Add(pSystem, pSystem + " " + Name, X, Y, Biome.Replace("Biome:", ""), Threat.Replace("Threat Level:", ""), "");
+                try
+                {
+                    PlanetPic.GetImage().Save(("planetpics\\" + pSystem + Name + ".png").Replace(" ", ""));
+                }
+                catch (Exception ex)
+                {
+                    Note = "System Note: Unable to save planet image";
+                }
+
+                XmlData.Tables[0].Rows.Add(pSystem, pSystem + " " + Name, X, Y, Biome.Replace("Biome:", ""), Threat.Replace("Threat Level:", ""), Note);
                 dataGridView1.Invoke(new MethodInvoker(() => { IsBusy = false; pictureBox7.Image = null; dataGridView1.Refresh(); XmlData.WriteXml(DBFile); }));
 
                 System.Media.SystemSounds.Exclamation.Play();
@@ -450,6 +468,9 @@ namespace Starbound_Planet_Tagger
             if (dataGridView1.SelectedCells.Count == 0)
                 return;
 
+            if (dataGridView1.SelectedCells[0].OwningRow.IsNewRow)
+                return;
+
             // Should put regex here with more restrictions
             var OName = dataGridView1.SelectedCells[0].OwningRow.Cells[1].Value.ToString().Replace("\\", "");
             var Name = (("planetpics\\" + OName + ".png").Replace(" ", ""));
@@ -469,7 +490,7 @@ namespace Starbound_Planet_Tagger
             }
             else if (!File.Exists(Name) || String.IsNullOrEmpty(OName))
             {
-                pictureBox1.Image = null;
+                pictureBox1.Image = Bitmap.FromFile("Thanks.png");
                 CurrentPic = "";
             }
             
@@ -492,6 +513,247 @@ namespace Starbound_Planet_Tagger
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             System.Diagnostics.Process.Start("https://github.com/showmethebitcoin/Starbound-Planet-Scanner");   
+        }
+
+        public string GetTemporaryDirectory()
+        {
+            string tempDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            if (Directory.Exists(tempDirectory))
+                Directory.Delete(tempDirectory, true);
+
+            Directory.CreateDirectory(tempDirectory);
+            return tempDirectory;
+        }
+
+      
+
+        private void exportbutton_Click(object sender, EventArgs e)
+        {
+            var Rows = dataGridView1.SelectedRows;
+
+
+
+            if (Rows.Count == 0 || (Rows.Count == 1 && Rows[0].IsNewRow))
+            {
+                MessageBox.Show("Select rows by holding the shift or control key and clicking to the left of the first cell of the row you want to add");
+                return;
+            }
+
+            if (exportRowsDialog.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            var FName = exportRowsDialog.FileName;
+
+            BackgroundWorker BGW = new BackgroundWorker();
+
+            exportbutton.Enabled = false;
+
+
+
+
+            BGW.DoWork += (o,args) =>
+            {
+
+               
+
+                var Dir = GetTemporaryDirectory();
+                var NewDBFile = Path.Combine(Dir, "sbdb.xml");
+
+                var XmlFile = new DataSet();
+              
+
+     //           var DefaultXML = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<sbplanet>\n<System>Starbound Planet Scanner Export File</System>\n<Name></Name>\n<X>0</X>\n" +
+     //"<Y>0</Y>\n<Biome></Biome>\n<Threat></Threat>\n<Notes>Exported from version " + " v" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString() + "</Notes>\n</sbplanet>";
+
+                try
+                {
+
+                   // File.WriteAllText(NewDBFile, DefaultXML);
+
+                    Directory.CreateDirectory(Dir + "\\planetpics");
+
+                    XmlFile.ReadXml(DBFile,XmlReadMode.InferSchema);
+                    XmlFile.Clear();
+
+
+                    var PlanetPics = new List<string>();
+
+                    for (int i = 0; i < Rows.Count; i++)
+                    {
+                      
+                        // Sort may mess this up
+                        // I guess I need an ID in there
+
+                        var TestForRow = ((DataRowView)Rows[i].DataBoundItem);
+
+
+                        if (TestForRow == null)
+                            continue;
+
+                        var TrueRow = (DataRow)  TestForRow.Row;
+
+                      
+
+                        XmlFile.Tables[0].ImportRow(TrueRow);
+                        
+
+
+                        // Should put regex here with more restrictions
+                        var OName = Rows[i].Cells[1].Value.ToString().Replace("\\", "");
+                        var Name = (("planetpics\\" + OName + ".png").Replace(" ", ""));
+
+                        if (!String.IsNullOrEmpty(OName) && File.Exists(Name))
+                        {
+                            if (!File.Exists(Path.Combine(Dir, Name)))
+                                File.Copy(Name, Path.Combine(Dir, Name));
+                        }
+
+
+                    }
+
+                    XmlFile.WriteXml(NewDBFile);
+                    XmlFile.WriteXmlSchema(Path.Combine(Dir, "schema.xml"));
+
+             
+
+
+                    XPathDocument myXPathDoc = new XPathDocument(NewDBFile);
+                    XslCompiledTransform myXslTrans = new XslCompiledTransform();
+                    myXslTrans.Load("SBDBtoHTML.xslt");
+                    using (XmlTextWriter myWriter = new XmlTextWriter(Path.Combine(Dir, "HtmlTableOutput.html"), null)) { 
+                    myXslTrans.Transform(myXPathDoc, null, myWriter);
+                        }
+
+                    if (File.Exists(FName))
+                    {
+                        File.Delete(FName);
+                    }
+                    System.IO.Compression.ZipFile.CreateFromDirectory(Dir, FName);
+
+                    MessageBox.Show("Export Complete!");
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.Message);
+
+                }
+                finally
+                {
+                    if (Directory.Exists(Dir))
+                        Directory.Delete(Dir, true);
+                }
+
+            };
+
+            BGW.RunWorkerCompleted += (o, arg) =>
+            {
+                exportbutton.Enabled = true;
+               
+            };
+
+
+            BGW.RunWorkerAsync();
+
+
+        }
+
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+            if (importRowsDialog.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            var FName = importRowsDialog.FileName;
+
+            BackgroundWorker BGW = new BackgroundWorker();
+
+            importbutton.Enabled = false;
+
+
+
+
+            BGW.DoWork += (o, args) =>
+            {
+                var Dir = GetTemporaryDirectory();
+                var ExistingDB = Path.Combine(Dir, "sbdb.xml");
+
+                try
+                {
+
+                  
+
+                    System.IO.Compression.ZipFile.ExtractToDirectory(FName, Dir);
+
+                    if (!File.Exists(ExistingDB))
+                    {
+                        MessageBox.Show("Invalid Zip file!");
+                        Directory.Delete(Dir, true);
+                        return;
+                    }
+
+
+                    var XmlFile = new DataSet();
+
+                    XmlFile = ReadSBDB(ExistingDB);
+
+
+                    if (!Directory.Exists("planetpics"))
+                    {
+                        Directory.CreateDirectory("planetpics");
+                    }
+
+
+                    var PlanetPics = new List<string>();
+                    var Rows = XmlFile.Tables[0].Rows;
+
+                    for (int i = 0; i < Rows.Count; i++)
+                    {
+
+                        XmlData.Tables[0].ImportRow(XmlFile.Tables[0].Rows[i]);
+
+
+                        // Should put regex here with more restrictions
+                        var OName = Rows[i].ItemArray[1].ToString().Replace("\\", "");
+                        var Name = (("planetpics\\" + OName + ".png").Replace(" ", ""));
+
+                        if (!String.IsNullOrEmpty(OName) && File.Exists(Path.Combine(Dir, Name)))
+                        {
+                            if (!File.Exists(Name))
+                                File.Copy(Path.Combine(Dir, Name), Path.Combine("planetpics", Name));
+                        }
+
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.Message);
+
+                }
+                finally
+                {
+                    if (Directory.Exists(Dir))
+                        Directory.Delete(Dir, true);
+                }
+
+
+               
+            };
+
+            BGW.RunWorkerCompleted += (o, arg) =>
+            {
+                importbutton.Enabled = true;
+                dataGridView1.Refresh();
+
+            };
+
+
+            BGW.RunWorkerAsync();
+
         }
     }
 }
