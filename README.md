@@ -33,6 +33,6 @@ Here's a full view of starbound and the scanner actually working:
 
 Close the scanner application and edit the XML file located at data/sbdb.xml; Add any new data nodes you want, just make sure the planet name is always the second one.
 
-For instance, if you wanted to add "In Progress" and "Done" to the list of fields, just add "<inProgress /><done />" before the first "</sbplanet>" closing tag.
+For instance, if you wanted to add "In Progress" and "Done" to the list of fields, just add `<inProgress /><done />` before the first `</sbplanet>` closing tag.
 
 I'll probably add a GUI for this eventually...
