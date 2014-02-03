@@ -36,3 +36,7 @@ Close the scanner application and edit the XML file located at data/sbdb.xml; Ad
 For instance, if you wanted to add "In Progress" and "Done" to the list of fields, just add `<inProgress /><done />` before the first `</sbplanet>` closing tag.
 
 I'll probably add a GUI for this eventually...
+
+========================
+**Upgrading from another build?**
+Just copy your "data" and "planetpics" folders from the old build folder to the new build folder. All user data is in those two folders.
