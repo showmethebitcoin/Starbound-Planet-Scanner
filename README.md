@@ -8,11 +8,22 @@ Finally, an automatic way to log planets with no typing! Using a custom OCR (opt
 
 Once the planets are logged in a sortable spreadsheet notes can be added or details can be changed.
 
+
+**Features:**
+- Automatically reads X, Y, Biome, Threat, Name and System from the Starbound application
+- Sort-able and editable spreadsheet view
+- Import/Export features featuring easy to use XML files
+- Export format can be used by other planet log sites/apps
+
 **Limitations:**
 - Currently windows only, also requires .NET 4.5
 - If you're using a mac in bootcamp, you need to hit shift-fn-f11 instead of print screen.
 - This program scans the active monitor when print screen is pressed, it will not work if Starbound is minimized or on a secondary monitor.
 - The mouse cursor must be over the targeted planet (otherwise it just logs the system.
+
+**Installation:**
+- Extract and enjoy! You might need to install .NET Framework 4.5, but it will prompt you.
+- If upgrading, copy your data and planetpics folders into the new directory before running.
 
 Want more features? Maybe buy me a beer and we can talk about it:
 
