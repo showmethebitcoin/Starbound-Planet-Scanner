@@ -9,10 +9,10 @@ Finally, an automatic way to log planets with no typing! Using a custom OCR (opt
 Once the planets are logged in a sortable spreadsheet notes can be added or details can be changed.
 
 **Limitations:**
-Currently windows only, also requires .NET 4.5
-If you're using a mac in bootcamp, you need to hit shift-fn-f11 instead of print screen.
-This program scans the active monitor when print screen is pressed, it will not work if Starbound is minimized or on a secondary monitor.
-The mouse cursor must be over the targeted planet (otherwise it just logs the system.
+- Currently windows only, also requires .NET 4.5
+- If you're using a mac in bootcamp, you need to hit shift-fn-f11 instead of print screen.
+- This program scans the active monitor when print screen is pressed, it will not work if Starbound is minimized or on a secondary monitor.
+- The mouse cursor must be over the targeted planet (otherwise it just logs the system.
 
 Want more features? Maybe buy me a beer and we can talk about it:
 
@@ -24,7 +24,7 @@ If you find my tool useful and want me to know it, please consider tipping some 
 
 I just did this for fun and I'm only one person, thanks for checking it out!
 
-- Nick
+-- Nick
 
 
 Here's a full view of starbound and the scanner actually working:
