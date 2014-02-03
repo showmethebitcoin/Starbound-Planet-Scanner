@@ -96,10 +96,10 @@ namespace Starbound_Planet_Tagger
            dataGridView1.UserDeletedRow += dataGridView1_UserDeletedRow;
         }
 
-        private DataSet ReadSBDB(string XmlPath)
+        private DataSet ReadSBDB(string XmlPath, string schemaPath = "schema.xml")
         {
             var nXmlData = new DataSet();
-            nXmlData.ReadXmlSchema("schema.xml");
+            nXmlData.ReadXmlSchema(schemaPath);
 
             if (!Directory.Exists("data"))
             {
@@ -673,7 +673,7 @@ namespace Starbound_Planet_Tagger
 
             importbutton.Enabled = false;
 
-
+            dataGridView1.DataSource = null;
 
 
             BGW.DoWork += (o, args) =>
@@ -698,7 +698,7 @@ namespace Starbound_Planet_Tagger
 
                     var XmlFile = new DataSet();
 
-                    XmlFile = ReadSBDB(ExistingDB);
+                    XmlFile = ReadSBDB(ExistingDB, Path.Combine(Dir,"schema.xml"));
 
 
                     if (!Directory.Exists("planetpics"))
@@ -710,10 +710,14 @@ namespace Starbound_Planet_Tagger
                     var PlanetPics = new List<string>();
                     var Rows = XmlFile.Tables[0].Rows;
 
+                  
+
+                    XmlData.Merge(XmlFile);
+
                     for (int i = 0; i < Rows.Count; i++)
                     {
 
-                        XmlData.Tables[0].ImportRow(XmlFile.Tables[0].Rows[i]);
+                     //   XmlData.Tables[0].ImportRow(XmlFile.Tables[0].Rows[i]);
 
 
                         // Should put regex here with more restrictions
@@ -723,7 +727,7 @@ namespace Starbound_Planet_Tagger
                         if (!String.IsNullOrEmpty(OName) && File.Exists(Path.Combine(Dir, Name)))
                         {
                             if (!File.Exists(Name))
-                                File.Copy(Path.Combine(Dir, Name), Path.Combine("planetpics", Name));
+                                File.Copy(Path.Combine(Dir, Name), Path.Combine(Name));
                         }
 
 
@@ -747,7 +751,11 @@ namespace Starbound_Planet_Tagger
             BGW.RunWorkerCompleted += (o, arg) =>
             {
                 importbutton.Enabled = true;
-                dataGridView1.Refresh();
+
+                
+
+                dataGridView1.DataSource = XmlData.Tables[0];
+                
 
             };
 
