@@ -91,8 +91,8 @@ namespace Starbound_Planet_Tagger
             }
 
 
-            var DefaultXML = "<?xml version=\"1.0\" encoding=\"utf-8\" ?><sbplanet><System>Starbound Planet Scanner</System><Name></Name><X>0</X>" +
- "<Y>0</Y><Biome></Biome><Threat></Threat><Notes>Enter notes here</Notes</sbplanet>";
+            var DefaultXML = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<sbplanet>\n<System>Starbound Planet Scanner</System>\n<Name></Name>\n<X>0</X>\n" +
+ "<Y>0</Y>\n<Biome></Biome>\n<Threat></Threat>\n<Notes>Enter notes here</Notes><InProgress></InProgress><Done></Done>\n</sbplanet>";
 
             if (!File.Exists(DBFile))
             {
