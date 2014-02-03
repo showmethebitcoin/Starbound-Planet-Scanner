@@ -99,7 +99,17 @@ namespace Starbound_Planet_Tagger
                 System.IO.File.WriteAllText(DBFile,DefaultXML);
             }
 
-            XmlData.ReadXml(DBFile);
+            try
+            {
+
+                XmlData.ReadXml(DBFile);
+            }
+            catch (Exception ex)
+            {
+                File.Copy(DBFile, DBFile+DateTime.Now.Ticks+".corrupt");
+                System.IO.File.WriteAllText(DBFile, DefaultXML);
+                XmlData.ReadXml(DBFile);
+            }
 
             if (XmlData.Tables.Count == 0)
             {
