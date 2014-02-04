@@ -180,6 +180,8 @@ namespace Starbound_Planet_Tagger
 
         }
 
+        int factor = 1;
+
         bool SeekWindow()
         {
             using (Bitmap bmpScreenCapture = new Bitmap(Screen.PrimaryScreen.Bounds.Width,
@@ -215,13 +217,27 @@ namespace Starbound_Planet_Tagger
                         var PixelMatch = WindowMarker.GetMatch(V);
                         if (PixelMatch != null)
                         {
+
+                            factor = 1;
+
+                            // Adjust for small UI
+                            if (PixelMatch.TextConversion == "iconleft_small")
+                            {
+                                factor = 2;
+                                Font = new SBSymbolTable(Color.FromArgb(0xff, 0xff, 0xff, 0xff));
+                                Font.AddDir("~\\symbols_small");
+
+                                FontRed = new SBSymbolTable(Color.FromArgb(0xff, 0xff, 0x00, 0x00));
+                                FontRed.AddDir("~\\symbols_small");
+                            }
+
                             Console.WriteLine("Found Match for {0} at ({1},{2})", PixelMatch.TextConversion, tx, ty);
-                            PlanetPic = new Viewport(tx - 15, ty + 40, 357, 291, bmpScreenCapture);
-                            PlanetName = new Viewport(tx + 329, ty + 50, 235, 21, bmpScreenCapture);
-                            PlanetSmallName = new Viewport(tx + 329, ty + 71, 235, 21, bmpScreenCapture);
-                            PlanetInfo = new Viewport(tx + 329, ty + 105, 215, 21, bmpScreenCapture);
-                            PlanetLevel = new Viewport(tx + 329, ty + 126, 215, 21, bmpScreenCapture);
-                            PlanetCoords = new Viewport(tx + 342, ty + 380, 225, 25, bmpScreenCapture);
+                            PlanetPic = new Viewport(tx - 12 / factor, ty + 42 / factor, 358 / factor, 294 / factor, bmpScreenCapture);
+                            PlanetName = new Viewport(tx + 328 / factor, ty + 52 / factor, 238 / factor, 24 / factor, bmpScreenCapture);
+                            PlanetSmallName = new Viewport(tx + 328 / factor, ty + 74 / factor, 238 / factor, 24 / factor, bmpScreenCapture);
+                            PlanetInfo = new Viewport(tx + 328 / factor, ty + 106 / factor, 218 / factor, 22 / factor, bmpScreenCapture);
+                            PlanetLevel = new Viewport(tx + 328 / factor, ty + 126 / factor, 218 / factor, 24 / factor, bmpScreenCapture);
+                            PlanetCoords = new Viewport(tx + 340 / factor, ty + 382 / factor, 228 / factor, 28 / factor, bmpScreenCapture);
                             ty = bmpScreenCapture.Height;
                             tx = bmpScreenCapture.Width; // Break out of double loop
                             ProcessImage.ReportProgress(100);
@@ -413,7 +429,7 @@ namespace Starbound_Planet_Tagger
 
             for (int i = 0; i < Chars.Count; i++)
             {
-                if (Chars[i].x - PrevPos > 0)
+                if (Chars[i].x - PrevPos > (factor == 1?0:2))
                 {
                     SB.Append(" ");
                 }
