@@ -35,6 +35,7 @@ using System.IO;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 using System.Xml;
+using System.Drawing.Drawing2D;
 
 
 namespace Starbound_Planet_Tagger
@@ -58,13 +59,26 @@ namespace Starbound_Planet_Tagger
 
         string DBFile = "data\\sbdb.xml";
 
+        int SeekTolerance = 0;
+        int TextTolerance = 0;
+
 
         public void CheckForPrintScreen(object sender, KeyEventArgs e)
         {
             if (e.KeyCode.Equals(Keys.PrintScreen))
             {
+
+            
+
+
                 if (ProcessImage.IsBusy)
                     return;
+
+
+                WindowMarker.SetTolerance(trackBar1.Value);
+
+                FontRed.SetTolerance(trackBar2.Value);
+                Font.SetTolerance(trackBar2.Value);
 
                 PlanetPic = null;
                 PlanetName = null;
@@ -151,13 +165,13 @@ namespace Starbound_Planet_Tagger
         {
             if (Font == null) {
                 Font = new SBSymbolTable(Color.FromArgb(0xff, 0xff, 0xff, 0xff));
-            Font.AddDir("~\\symbols");
+            Font.AddDir("~\\symbols", TextTolerance);
 
             FontRed = new SBSymbolTable(Color.FromArgb(0xff, 0xff, 0x00, 0x00));
-            FontRed.AddDir("~\\symbols");
+            FontRed.AddDir("~\\symbols", TextTolerance);
 
             WindowMarker = new SBSymbolTable(Color.FromArgb(0xff, 0x00, 0x00, 0x00));
-            WindowMarker.AddDir("~\\windowmarker");
+            WindowMarker.AddDir("~\\windowmarker", SeekTolerance);
 
             }
         }
@@ -166,6 +180,12 @@ namespace Starbound_Planet_Tagger
         {
             if (ProcessImage.IsBusy)
                 return;
+
+            WindowMarker.SetTolerance(trackBar1.Value);
+
+            FontRed.SetTolerance(trackBar2.Value);
+            Font.SetTolerance(trackBar2.Value);
+            
 
             PlanetPic = null;
             PlanetName = null;
@@ -180,7 +200,7 @@ namespace Starbound_Planet_Tagger
 
         }
 
-        int factor = 1;
+        int factor = 2;
 
         bool SeekWindow()
         {
@@ -218,26 +238,62 @@ namespace Starbound_Planet_Tagger
                         if (PixelMatch != null)
                         {
 
-                            factor = 1;
+                            
 
                             // Adjust for small UI
                             if (PixelMatch.TextConversion == "iconleft_small")
                             {
-                                factor = 2;
+                                factor = 1;
                                 Font = new SBSymbolTable(Color.FromArgb(0xff, 0xff, 0xff, 0xff));
-                                Font.AddDir("~\\symbols_small");
+                                Font.AddDir("~\\symbols_small", TextTolerance);
+                               
+                                FontRed = new SBSymbolTable(Color.FromArgb(0xff, 0xff, 0x00, 0x00));
+                                FontRed.AddDir("~\\symbols_small", TextTolerance);
+                               
+                            }
+                            else if ((PixelMatch.TextConversion == "iconcenter") && (factor != 2))
+                            {
+                                Font = new SBSymbolTable(Color.FromArgb(0xff, 0xff, 0xff, 0xff));
+                                Font.AddDir("~\\symbols", TextTolerance);
 
                                 FontRed = new SBSymbolTable(Color.FromArgb(0xff, 0xff, 0x00, 0x00));
-                                FontRed.AddDir("~\\symbols_small");
+                                FontRed.AddDir("~\\symbols", TextTolerance);
+
+                                factor = 2;
+                            }
+                            else if ((PixelMatch.TextConversion == "iconleft_huge"))
+                            {
+                                Font = new SBSymbolTable(Color.FromArgb(0xff, 0xff, 0xff, 0xff));
+                                Font.AddDir("~\\symbols", TextTolerance);
+
+                                FontRed = new SBSymbolTable(Color.FromArgb(0xff, 0xff, 0x00, 0x00));
+                                FontRed.AddDir("~\\symbols", TextTolerance);
+
+                                factor = 2;
+
+                                var nWidth = bmpScreenCapture.Width>>1;
+                                var nHeight = bmpScreenCapture.Height>>1;
+                                Bitmap result = new Bitmap(nWidth, nHeight);
+                                using (Graphics g = Graphics.FromImage((Image)result))
+                                {
+                                    g.InterpolationMode = InterpolationMode.NearestNeighbor;
+                                    g.DrawImage(bmpScreenCapture, 0, 0, nWidth, nHeight);
+                                }
+
+                                V = new Viewport(0,0,nWidth, nHeight, result);
+                                tx= tx>>1;
+                                ty = ty>>1;
+                                V.Offset(tx,ty);
+
                             }
 
                             Console.WriteLine("Found Match for {0} at ({1},{2})", PixelMatch.TextConversion, tx, ty);
-                            PlanetPic = new Viewport(tx - 12 / factor, ty + 42 / factor, 358 / factor, 294 / factor, bmpScreenCapture);
-                            PlanetName = new Viewport(tx + 328 / factor, ty + 52 / factor, 238 / factor, 24 / factor, bmpScreenCapture);
-                            PlanetSmallName = new Viewport(tx + 328 / factor, ty + 74 / factor, 238 / factor, 24 / factor, bmpScreenCapture);
-                            PlanetInfo = new Viewport(tx + 328 / factor, ty + 106 / factor, 218 / factor, 22 / factor, bmpScreenCapture);
-                            PlanetLevel = new Viewport(tx + 328 / factor, ty + 126 / factor, 218 / factor, 24 / factor, bmpScreenCapture);
-                            PlanetCoords = new Viewport(tx + 340 / factor, ty + 382 / factor, 228 / factor, 28 / factor, bmpScreenCapture);
+                            PlanetPic = new Viewport(tx - 6 / 2 * factor, ty + 42 / 2 * factor, 358 / 2 * factor, 294 / 2 * factor, V.GetSource());
+                            PlanetName = new Viewport(tx + 328 / 2 * factor, ty + 50 / 2 * factor, 238 / 2 * factor, 26 / 2 * factor, V.GetSource());
+                            PlanetSmallName = new Viewport(tx + 328 / 2 * factor, ty + 74 / 2 * factor, 238 / 2 * factor, 24 / 2 * factor, V.GetSource());
+                            PlanetInfo = new Viewport(tx + 328 / 2 * factor, ty + 106 / 2 * factor, 218 / 2 * factor, 24 / 2 * factor, V.GetSource());
+                            PlanetLevel = new Viewport(tx + 328 / 2 * factor, ty + 126 / 2 * factor, 218 / 2 * factor, 24 / 2 * factor, V.GetSource());
+                            PlanetCoords = new Viewport(tx + 340 / 2 * factor, ty + 382 / 2 * factor, 228 / 2 * factor, 28 / 2 * factor, V.GetSource());
                             ty = bmpScreenCapture.Height;
                             tx = bmpScreenCapture.Width; // Break out of double loop
                             ProcessImage.ReportProgress(100);
@@ -359,23 +415,40 @@ namespace Starbound_Planet_Tagger
                     Note = "System Note: Unable to save planet image";
                 }
 
-                XmlData.Tables[0].Rows.Add(pSystem, pSystem + " " + Name, X, Y, Biome.Replace("Biome:", ""), Threat.Replace("Threat Level:", ""), Note);
-                dataGridView1.Invoke(new MethodInvoker(() => { IsBusy = false; pictureBox7.Image = null; dataGridView1.Refresh(); XmlData.WriteXml(DBFile); }));
-
+                if (String.IsNullOrEmpty(pSystem + Name + X + Y + Biome + Threat))
+                {
+                    dataGridView1.Invoke(new MethodInvoker(() => { pictureBox7.Image = Bitmap.FromFile("notfound.png");
+                    pictureBox1.Image = null;
+                        pictureBox3.Image = null;
+                    pictureBox4.Image = null;
+                    pictureBox5.Image = null;
+                    pictureBox6.Image = null;
+                    pictureBox2.Image = null;
+                        IsBusy = false; pictureBox7.Image = null; dataGridView1.Refresh();
+                    }));
+               
+                    System.Media.SystemSounds.Hand.Play();
+                }
+                else
+                {
+                    XmlData.Tables[0].Rows.Add(pSystem, pSystem + " " + Name, X, Y, Biome.Replace("Biome:", ""), Threat.Replace("Threat Level:", ""), Note);
+                    dataGridView1.Invoke(new MethodInvoker(() => { IsBusy = false; pictureBox7.Image = null; dataGridView1.Refresh(); XmlData.WriteXml(DBFile); }));
+               
                 System.Media.SystemSounds.Exclamation.Play();
+                }
 
             }
             else
             {
               //  pictureBox1.Image = Bitmap.FromFile("notfound.png");
-                pictureBox2.Image = Bitmap.FromFile("notfound.png");
+                pictureBox7.Image = Bitmap.FromFile("notfound.png");
                 pictureBox3.Image = null;
                 pictureBox4.Image = null;
                 pictureBox5.Image = null;
-                pictureBox6.Image = null;
+                pictureBox2.Image = null;
 
                 IsBusy = false;
-                pictureBox7.Image = null;
+                pictureBox2.Image = null;
 
                 System.Media.SystemSounds.Hand.Play();
             }
@@ -429,7 +502,7 @@ namespace Starbound_Planet_Tagger
 
             for (int i = 0; i < Chars.Count; i++)
             {
-                if (Chars[i].x - PrevPos > (factor == 1?0:2))
+                if (Chars[i].x - PrevPos > (factor == 1?2:2))
                 {
                     SB.Append(" ");
                 }
@@ -777,6 +850,56 @@ namespace Starbound_Planet_Tagger
 
 
             BGW.RunWorkerAsync();
+
+        }
+
+        private void trackBar1_ValueChanged(object sender, EventArgs e)
+        {
+            lock (typeof(SBSymbolTable))
+            {
+                WindowMarker.SetTolerance(trackBar1.Value);
+                SeekTolerance = trackBar1.Value;
+            }
+        }
+
+        private void trackBar2_ValueChanged(object sender, EventArgs e)
+        {
+            lock (typeof(SBSymbolTable))
+            {
+                FontRed.SetTolerance(trackBar2.Value);
+                Font.SetTolerance(trackBar2.Value);
+
+                TextTolerance = trackBar2.Value;
+            }
+        }
+
+        private void button2_Click_2(object sender, EventArgs e)
+        {
+
+
+        }
+
+        private void button2_Click_3(object sender, EventArgs e)
+        {
+            Viewport V = new Viewport(0, 0, 52, 15, new Bitmap("small_grass.fw.png"));
+
+            
+                                factor = 2;
+                                Font = new SBSymbolTable(Color.FromArgb(0xff, 0xff, 0xff, 0xff));
+                                Font.AddDir("~\\symbols_small", 0);
+                               
+                                FontRed = new SBSymbolTable(Color.FromArgb(0xff, 0xff, 0x00, 0x00));
+                                FontRed.AddDir("~\\symbols_small", 0);
+
+            for (int ty = 0; ty < V.Height; ty++)
+                for (int tx = 0; tx < V.Width; tx++)
+                {
+                    V.Offset(tx, ty);
+                    var S = Font.GetMatch(V);
+                    if (S!=null)
+                    Console.Write(S.TextConversion);
+                  
+                }
 
         }
     }

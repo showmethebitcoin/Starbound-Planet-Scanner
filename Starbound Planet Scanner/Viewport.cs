@@ -73,8 +73,11 @@ namespace Starbound_Planet_Tagger
             offsetY = Y;
         }
 
-        
 
+        public Bitmap GetSource()
+        {
+            return SourceImage;
+        }
 
         public Viewport(int X, int Y, int pWidth, int pHeight, Viewport Source)
         {
@@ -125,6 +128,9 @@ namespace Starbound_Planet_Tagger
             byte R = SourceBytes[index + 2];
             byte A = SourceBytes[index + 3];
             // BGR
+
+            if (A == 0)
+                A = 255; // Screenshot is masking on black!
 
             Color NewColor = Color.FromArgb(A, R, G, B );
 

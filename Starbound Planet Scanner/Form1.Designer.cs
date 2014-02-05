@@ -35,6 +35,11 @@
             this.ProcessImage = new System.ComponentModel.BackgroundWorker();
             this.LoadSymbols = new System.ComponentModel.BackgroundWorker();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.button2 = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.trackBar2 = new System.Windows.Forms.TrackBar();
+            this.label2 = new System.Windows.Forms.Label();
+            this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.pictureBox7 = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
             this.pictureBox6 = new System.Windows.Forms.PictureBox();
@@ -47,12 +52,14 @@
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.ProgramVersion = new System.Windows.Forms.Label();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.importbutton = new System.Windows.Forms.Button();
             this.exportbutton = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.exportRowsDialog = new System.Windows.Forms.SaveFileDialog();
-            this.importbutton = new System.Windows.Forms.Button();
             this.importRowsDialog = new System.Windows.Forms.OpenFileDialog();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
@@ -79,6 +86,11 @@
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.Black;
+            this.panel1.Controls.Add(this.button2);
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.trackBar2);
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.trackBar1);
             this.panel1.Controls.Add(this.pictureBox7);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.pictureBox6);
@@ -91,9 +103,59 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(363, 534);
+            this.panel1.Size = new System.Drawing.Size(363, 643);
             this.panel1.TabIndex = 10;
             this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(266, 316);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 22;
+            this.button2.Text = "button2";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click_3);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.ForeColor = System.Drawing.Color.Yellow;
+            this.label3.Location = new System.Drawing.Point(12, 580);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(285, 13);
+            this.label3.TabIndex = 21;
+            this.label3.Text = "Text Tolerance (Increase if the text has missing characters)";
+            // 
+            // trackBar2
+            // 
+            this.trackBar2.Location = new System.Drawing.Point(7, 596);
+            this.trackBar2.Maximum = 160;
+            this.trackBar2.Name = "trackBar2";
+            this.trackBar2.Size = new System.Drawing.Size(352, 45);
+            this.trackBar2.TabIndex = 20;
+            this.trackBar2.TickFrequency = 5;
+            this.trackBar2.ValueChanged += new System.EventHandler(this.trackBar2_ValueChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.ForeColor = System.Drawing.Color.Yellow;
+            this.label2.Location = new System.Drawing.Point(12, 516);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(305, 13);
+            this.label2.TabIndex = 19;
+            this.label2.Text = "Window Locator Tolerance (Increase if it can\'t find the window)";
+            // 
+            // trackBar1
+            // 
+            this.trackBar1.Location = new System.Drawing.Point(5, 532);
+            this.trackBar1.Maximum = 114;
+            this.trackBar1.Name = "trackBar1";
+            this.trackBar1.Size = new System.Drawing.Size(352, 45);
+            this.trackBar1.TabIndex = 18;
+            this.trackBar1.TickFrequency = 5;
+            this.trackBar1.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
             // 
             // pictureBox7
             // 
@@ -101,6 +163,7 @@
             this.pictureBox7.Location = new System.Drawing.Point(7, 427);
             this.pictureBox7.Name = "pictureBox7";
             this.pictureBox7.Size = new System.Drawing.Size(272, 27);
+            this.pictureBox7.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox7.TabIndex = 17;
             this.pictureBox7.TabStop = false;
             // 
@@ -108,7 +171,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(8, 512);
+            this.label1.Location = new System.Drawing.Point(3, 457);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(347, 13);
             this.label1.TabIndex = 16;
@@ -120,6 +183,7 @@
             this.pictureBox6.Location = new System.Drawing.Point(7, 396);
             this.pictureBox6.Name = "pictureBox6";
             this.pictureBox6.Size = new System.Drawing.Size(272, 27);
+            this.pictureBox6.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox6.TabIndex = 15;
             this.pictureBox6.TabStop = false;
             // 
@@ -129,6 +193,7 @@
             this.pictureBox5.Location = new System.Drawing.Point(7, 366);
             this.pictureBox5.Name = "pictureBox5";
             this.pictureBox5.Size = new System.Drawing.Size(272, 26);
+            this.pictureBox5.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox5.TabIndex = 14;
             this.pictureBox5.TabStop = false;
             // 
@@ -138,6 +203,7 @@
             this.pictureBox4.Location = new System.Drawing.Point(7, 330);
             this.pictureBox4.Name = "pictureBox4";
             this.pictureBox4.Size = new System.Drawing.Size(272, 32);
+            this.pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox4.TabIndex = 13;
             this.pictureBox4.TabStop = false;
             // 
@@ -147,6 +213,7 @@
             this.pictureBox3.Location = new System.Drawing.Point(7, 296);
             this.pictureBox3.Name = "pictureBox3";
             this.pictureBox3.Size = new System.Drawing.Size(272, 30);
+            this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox3.TabIndex = 12;
             this.pictureBox3.TabStop = false;
             // 
@@ -156,6 +223,7 @@
             this.pictureBox2.Location = new System.Drawing.Point(7, 260);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(272, 32);
+            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox2.TabIndex = 11;
             this.pictureBox2.TabStop = false;
             // 
@@ -167,19 +235,20 @@
             this.button1.Font = new System.Drawing.Font("04b03", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button1.ForeColor = System.Drawing.Color.White;
             this.button1.Image = ((System.Drawing.Image)(resources.GetObject("button1.Image")));
-            this.button1.Location = new System.Drawing.Point(103, 457);
+            this.button1.Location = new System.Drawing.Point(280, 262);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(144, 49);
+            this.button1.Size = new System.Drawing.Size(77, 30);
             this.button1.TabIndex = 10;
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // pictureBox1
             // 
-            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.pictureBox1.Location = new System.Drawing.Point(-7, -35);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(362, 291);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 9;
             this.pictureBox1.TabStop = false;
             // 
@@ -191,7 +260,7 @@
             this.flowLayoutPanel1.Controls.Add(this.exportbutton);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(363, 487);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(363, 596);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(529, 47);
             this.flowLayoutPanel1.TabIndex = 12;
@@ -218,6 +287,18 @@
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Text = "View this Project on GitHub";
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+            // 
+            // importbutton
+            // 
+            this.importbutton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.importbutton.ForeColor = System.Drawing.Color.White;
+            this.importbutton.Location = new System.Drawing.Point(289, 3);
+            this.importbutton.Name = "importbutton";
+            this.importbutton.Size = new System.Drawing.Size(54, 23);
+            this.importbutton.TabIndex = 3;
+            this.importbutton.Text = "Import";
+            this.importbutton.UseVisualStyleBackColor = true;
+            this.importbutton.Click += new System.EventHandler(this.button2_Click_1);
             // 
             // exportbutton
             // 
@@ -268,7 +349,7 @@
             dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
-            this.dataGridView1.Size = new System.Drawing.Size(529, 487);
+            this.dataGridView1.Size = new System.Drawing.Size(529, 596);
             this.dataGridView1.TabIndex = 13;
             this.dataGridView1.SelectionChanged += new System.EventHandler(this.dataGridView1_SelectionChanged);
             // 
@@ -277,24 +358,12 @@
             this.exportRowsDialog.DefaultExt = "*.zip";
             this.exportRowsDialog.Filter = "Starbound Planet Archive|*.zip";
             // 
-            // importbutton
-            // 
-            this.importbutton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.importbutton.ForeColor = System.Drawing.Color.White;
-            this.importbutton.Location = new System.Drawing.Point(289, 3);
-            this.importbutton.Name = "importbutton";
-            this.importbutton.Size = new System.Drawing.Size(54, 23);
-            this.importbutton.TabIndex = 3;
-            this.importbutton.Text = "Import";
-            this.importbutton.UseVisualStyleBackColor = true;
-            this.importbutton.Click += new System.EventHandler(this.button2_Click_1);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
-            this.ClientSize = new System.Drawing.Size(892, 534);
+            this.ClientSize = new System.Drawing.Size(892, 643);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.panel1);
@@ -306,6 +375,8 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).EndInit();
@@ -342,6 +413,11 @@
         private System.Windows.Forms.SaveFileDialog exportRowsDialog;
         private System.Windows.Forms.Button importbutton;
         private System.Windows.Forms.OpenFileDialog importRowsDialog;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TrackBar trackBar1;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TrackBar trackBar2;
+        private System.Windows.Forms.Button button2;
     }
 }
 

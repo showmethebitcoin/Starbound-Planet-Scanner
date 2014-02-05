@@ -34,12 +34,13 @@ namespace Starbound_Planet_Tagger
         public int offsetX;
         public int offsetY;
         protected int ArgColor;
+        public int GlobalTolerance = 0; // may not be thread safe
 
-        public PixelRule(int oX, int oY, int pColor)
+        public PixelRule(int oX, int oY, int pColor, int Tolerance=0)
         {
             offsetX = oX;
             offsetY = oY;
-
+            GlobalTolerance = Tolerance;
       
             ArgColor = pColor;
         }
@@ -52,7 +53,7 @@ namespace Starbound_Planet_Tagger
    
     class MatchExactColor : PixelRule
     {
-        public MatchExactColor(int oX, int oY, int pColor):base(oX, oY, pColor)
+        public MatchExactColor(int oX, int oY, int pColor, int Tolerance=0):base(oX, oY, pColor,Tolerance)
         {
 
         }
@@ -64,11 +65,64 @@ namespace Starbound_Planet_Tagger
         }
     }
 
+    class MatchColorWithinTolerance : PixelRule
+    {
+        public MatchColorWithinTolerance(int oX, int oY, int pColor, int Tolerance = 0)
+            : base(oX, oY, pColor,Tolerance)
+        {
+
+        }
+
+       
+
+        public override bool Assert(Viewport SourceImage)
+        {
+            var Src = SourceImage.GetPixel(offsetX, offsetY);
+            var Arg = Color.FromArgb(ArgColor);
+
+            if (Src.A == 0) // can't match, off the viewpoer
+                return false;
+
+            var MatchChar = ((Math.Abs(Src.R - Arg.R) <= GlobalTolerance) &&
+                      (Math.Abs(Src.G - Arg.G) <= GlobalTolerance) && (Math.Abs(Src.B - Arg.B) <= GlobalTolerance));
+
+          
+            
+            return MatchChar;
+        }
+    }
+
+    class DoNotMatchColorWithinTolerance : PixelRule
+    {
+
+        public DoNotMatchColorWithinTolerance(int oX, int oY, int pColor, int Tolerance = 0)
+            : base(oX, oY, pColor, Tolerance)
+        {
+
+        }
+
+        public override bool Assert(Viewport SourceImage)
+        {
+  var Src = SourceImage.GetPixel(offsetX, offsetY);
+            var Arg = Color.FromArgb(ArgColor);
+
+            if (Src.A == 0) // can't match, off the viewpoer
+                return false;
+
+            var MatchChar = ((Math.Abs(Src.R - Arg.R) <= GlobalTolerance) &&
+                      (Math.Abs(Src.G - Arg.G) <= GlobalTolerance) && (Math.Abs(Src.B - Arg.B) <= GlobalTolerance));
+
+          
+            
+            return !MatchChar;
+        }
+    }
+
     class DoNotMatchColor : PixelRule
     {
 
-        public DoNotMatchColor(int oX, int oY, int pColor)
-            : base(oX, oY, pColor)
+        public DoNotMatchColor(int oX, int oY, int pColor, int Tolerance=0)
+            : base(oX, oY, pColor,Tolerance)
         {
 
         }

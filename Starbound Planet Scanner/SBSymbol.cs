@@ -37,7 +37,7 @@ namespace Starbound_Planet_Tagger
         public Color RuleColor;
         public int Width;
 
-        public SBSymbol(string SymbolPath, Color SymbolColor, string SymbolText)
+        public SBSymbol(string SymbolPath, Color SymbolColor, string SymbolText, int Tolerance=0)
         {
             var B = new Bitmap(SymbolPath);
             var skip = true;
@@ -98,22 +98,35 @@ namespace Starbound_Planet_Tagger
                         offsetY = y;
                     }
 
+
+                    var update = false;
                     if (Pix.Equals(Color.Magenta.ToArgb()))
                     {
-                        Rules.Add(new DoNotMatchColor( x - offsetX,  y - offsetY,RuleColor.ToArgb() ));
-
-                    }
+                        Rules.Add(new DoNotMatchColorWithinTolerance( x - offsetX,  y - offsetY,RuleColor.ToArgb(), Tolerance ));
+                        update = true;
+                    } else
+                        if (Pix.Equals(Color.Lime.ToArgb()))
+                        {
+                            Rules.Add(new DoNotMatchColorWithinTolerance(x - offsetX, y - offsetY, RuleColor.ToArgb(), Tolerance));
+                            update = true;
+                        }
                     else if (Pix.Equals(Color.Black.ToArgb()))
                     {
-                        Rules.Add(new MatchExactColor( x - offsetX, y - offsetY,  RuleColor.ToArgb()));
+                        Rules.Add(new MatchColorWithinTolerance(x - offsetX, y - offsetY, RuleColor.ToArgb(), Tolerance));
+                        update = true;
                     } else {
                         // Match the same pixel color as the source image if it's not nothing
-                        if (PixR.A != 0)
-                            Rules.Add(new MatchExactColor(x - offsetX, y - offsetY, Pix));
+                        if (PixR.A != 0) { 
+                            Rules.Add(new MatchColorWithinTolerance(x - offsetX, y - offsetY, Pix, Tolerance));
+                            update = true;
+                        }
                     }
 
-                    Min = Math.Min(x - offsetX, Min);
+                    if (update) { 
+                        Min = Math.Min(x - offsetX, Min);
                     Max = Math.Max(x - offsetX, Max);
+                    }
+                    
 
                 }
             }
@@ -134,15 +147,39 @@ namespace Starbound_Planet_Tagger
         }
 
         public bool IsMatch(Viewport Test) {
-          
+            int r = 0;
             foreach (var Rule in Rules) {
                 
                 if (!Rule.Assert(Test))
+                {
+
                     return false;
-              
+                }
+                r++;
             }
 
             return true;
+        }
+
+        public void SetTolerance(int Tolerance)
+        {
+            foreach (var Rule in Rules)
+            {
+
+                Rule.GlobalTolerance = Tolerance;
+
+            }
+        }
+
+        public void ScaleRules(int Factor)
+        {
+            foreach (var Rule in Rules)
+            {
+
+                Rule.offsetX *= Factor;
+                Rule.offsetY *= Factor;
+
+            }
         }
 
 

@@ -36,19 +36,43 @@ namespace Starbound_Planet_Tagger
 
         Color MatchColor;
 
-        public SBSymbolTable(Color SymbolColor)
+        public string Tag;
+
+        public SBSymbolTable(Color SymbolColor, string pTag="Default")
         {
             Symbols = new List<SBSymbol>();
             MatchColor = SymbolColor;
 
-
+            Tag = pTag;
         }
 
-        public void AddDir(string Dir) {
+        public void SetTolerance(int Tolerance)
+        {
+            for (int i = 0; i < Symbols.Count; i++)
+            {
+
+
+                Symbols[i].SetTolerance(Tolerance);
+                }
+        }
+
+        public void ScaleRules(int Factor)
+        {// Does not work
+            for (int i = 0; i < Symbols.Count; i++)
+            {
+
+
+                Symbols[i].ScaleRules(Factor);
+            }
+        }
+
+        public void AddDir(string Dir, int Tolerance=0) {
             foreach (var F in Directory.GetFiles(Dir.Replace("~", Environment.CurrentDirectory))) {
                 var Name = F.Substring(F.LastIndexOf("\\")+1, F.LastIndexOf(".") - F.LastIndexOf("\\") - 1);
-                Symbols.Add(new SBSymbol(F, MatchColor, Name));
+                Symbols.Add(new SBSymbol(F, MatchColor, Name, Tolerance));
             }
+
+            Tag = Dir;
         }
 
         public SBSymbol GetMatch(Viewport VP)
